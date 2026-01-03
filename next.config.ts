@@ -1,19 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   // Vercel için optimize edilmiş ayarlar
   reactStrictMode: true,
-  // WebSocket bağlantıları için gerekli
-  webpack: (config) => {
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      fs: false,
-      net: false,
-      tls: false,
-    };
-    return config;
-  },
+  // Next.js 16'da Turbopack varsayılan, webpack config yerine boş turbopack config
+  // Eğer webpack kullanmak isterseniz: npm run build -- --webpack
+  turbopack: {},
 };
 
 export default nextConfig;

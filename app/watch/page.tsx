@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Room, RoomEvent, RemoteParticipant } from 'livekit-client';
 import { getLiveKitUrl } from '@/lib/livekit';
@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Users, Radio } from 'lucide-react';
 import Link from 'next/link';
 
-export default function WatchPage() {
+function WatchPageContent() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -166,7 +166,7 @@ export default function WatchPage() {
       });
 
       newRoom.on(RoomEvent.TrackPublished, (publication, participant) => {
-        if (publication.kind === 'video' && participant !== newRoom.localParticipant) {
+        if (publication.kind === 'video' && participant instanceof RemoteParticipant) {
           publication.setSubscribed(true);
         }
       });
@@ -347,5 +347,17 @@ export default function WatchPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function WatchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Yükleniyor...</p>
+      </div>
+    }>
+      <WatchPageContent />
+    </Suspense>
   );
 }
